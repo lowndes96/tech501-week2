@@ -146,7 +146,7 @@ then start in background: pm2 start app.js
 
 `sudo nano /etc/mongod.conf`
 
-bindIP: 0.0.0
+bindIP: 0.0.0.0 
 
 *add screenshot of file 
 - app connects to db (yay)
