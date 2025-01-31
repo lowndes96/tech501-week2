@@ -9,7 +9,9 @@
   - [add port rule + create new network security group](#add-port-rule--create-new-network-security-group)
     - [using github](#using-github)
   - [Deploy the Sparta test app](#deploy-the-sparta-test-app)
-  - [making a generalised image](#making-a-generalised-image)
+  - [Making a generalised image](#making-a-generalised-image)
+    - [In terminal](#in-terminal)
+    - [On azure](#on-azure)
 - [28/01/25](#280125)
   - [making a database VM](#making-a-database-vm)
     - [dependancys:](#dependancys)
@@ -20,6 +22,7 @@
           - [get reverse proxy working - nginx rerout from port 80 to port 3000 (so no longer need to do :3000):](#get-reverse-proxy-working---nginx-rerout-from-port-80-to-port-3000-so-no-longer-need-to-do-3000)
           - [run app in background:](#run-app-in-background)
           - [create db image:](#create-db-image)
+          - [user data script](#user-data-script)
     - [next steps](#next-steps)
     - [farah's sudo debugging](#farahs-sudo-debugging)
   
@@ -53,23 +56,30 @@ azure@user specifies user you want to log in as to the VM <br>
 
 ### using github 
 
-*to do*
+- Clone the repository and navigate into it:
+    
+    `git clone https://github.com/<your-repo>.git`
+    
+    `cd <repo-name>`
+*add more*
 
 ## Deploy the Sparta test app
 
-* cd into app 
-* npm install 
-* check permissions over app folder (should have full) 
-* node app.js or npm start 
-* ctrl c to exit 
-* webadress:3000 to view 
+1. cd into app `cd /repo/app`
+2. run `npm install`
+3. check permissions over app folder `ls -l /repo/app` you should have full permissions
+4. run the app using either `node app.js` or `npm start` 
+5. webadress:3000 to view in browser
 
-## making a generalised image 
+## Making a generalised image 
 
+### In terminal 
 * Move your app code from adminuser home directory to root directory (so in the root directory you will have a "repo" folder, containing an "app" folder)
-* waagent command that will wipe out the adminuser folder `waagent -deprovision+user` in command line 
-* stop and wait for VM to deprovision 
-* make an image in azure: capture > image (in menu)
+* waagent command that will wipe out the adminuser folder `waagent -deprovision+user` in command line
+### On azure 
+* stop the vm and wait for it to dealocate
+  * will also happen if you just click 'capture > image'
+* make an image in azure: capture > image
 ![make an image](25.01.27/capture-vm-image.png)
 * setting up the image: 
   *  No need to have the image in the gallery 
@@ -192,7 +202,7 @@ Deliverable: Paste link to working app in the main chat with a message like "app
         pm2 start app.js
         pm2 stop app.js
 ```
-
+* -g global flag, enables pm2 to be used by all users, not just you. 
 
 ###### create db image: 
 ```
@@ -257,9 +267,26 @@ To deliver
         Finish documentation
         Submit link to all your documentation on how to automate the deployment, which should be a culmination of all the ways and things you've learnt from how to do a 2-tier deployment of the Sparta test app
 ``` 
+###### user data script
 
+```
+#!/bin/bash
+ 
+# navigating into app folder
+cd /repo/nodejs20-sparta-test-app/app
+ 
+#export DB_HOST= correct private IP
+export DB_HOST=mongodb://*10.0.3.4*:27017/posts
+ 
+#starting the app
+pm2 start app.js
+ 
+(check your IP address though)
+ ``` 
 
 echo 'export DB_HOST=mongodb://20.90.208.188:27017/posts' >> /.bashrc
+
+
 
 ### next steps 
    21  export DB_HOST=mongodb://10.0.3.4:27017/posts  >>.bashrc
