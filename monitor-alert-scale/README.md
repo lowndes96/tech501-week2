@@ -6,14 +6,25 @@
   - [autoscaling](#autoscaling)
     - [why?](#why)
     - [types of scaling](#types-of-scaling)
-    - [complext arcitecture involves planning](#complext-arcitecture-involves-planning)
+    - [complex arcitecture involves planning](#complex-arcitecture-involves-planning)
     - [How does automated scaling work?](#how-does-automated-scaling-work)
     - [code-along - creating a virtual machine scale set](#code-along---creating-a-virtual-machine-scale-set)
       - [set up](#set-up)
       - [running the scale set](#running-the-scale-set)
-  - [security](#security)
+  - [Security](#security)
     - [securing the database using a 3 - subnet architecture](#securing-the-database-using-a-3---subnet-architecture)
-      - [code-along set up new virtual network](#code-along-set-up-new-virtual-network)
+    - [code-along set up new virtual network](#code-along-set-up-new-virtual-network)
+      - [steps:](#steps)
+      - [Create v-net and subnets](#create-v-net-and-subnets)
+      - [Create DB VM from image](#create-db-vm-from-image)
+      - [Create app VM from image](#create-app-vm-from-image)
+      - [Check connection via Ping](#check-connection-via-ping)
+      - [Create NVA VM](#create-nva-vm)
+  - [](#)
+      - [Create route table \& associate with subnet](#create-route-table--associate-with-subnet)
+      - [Enable IP forwarding for NVA VM](#enable-ip-forwarding-for-nva-vm)
+      - [Setup IP table rules](#setup-ip-table-rules)
+      - [Setup stricter rules on the DB VM](#setup-stricter-rules-on-the-db-vm)
 
 
 ### dashboard creation code along
@@ -41,7 +52,7 @@ test cpu
 
 *research and add comparison table here*
 
-### complext arcitecture involves planning 
+### complex arcitecture involves planning 
 
 * Azure VM scale set with high avalability (HA) and scalability 
 * automatic scalability helps with high avalability, but they are not the same thing 
@@ -87,34 +98,48 @@ test cpu
 * when the vmss is relaunched you will need to re-image the instances in order to get them running 
 
 
-## security 
+## Security 
 
 ### securing the database using a 3 - subnet architecture 
-![diagram of subnet architecture](../25.01.30/vm-architecture-2.drawio.png)
+![3 subnet arcitecture diagram](../25.01.30/vm-architecture-2.drawio.png)
 * nic network interface card - connected to network security group which has rules about what can be allowed in 
 * NIC enables interaction 
 * NSG chooses what is allowed 
-* port rules: 
-  * public subnet: 
-    * 80 http 
-    * 22 ssh 
-    * not port:3000 (open to internet)
-  * private subnet (): 
-    * 22 ssh 
-    * 27017 mongo db (haven't had to use previously as azure default allows things in the same virtual network to communicate)
-    * deny all other traffic 
-  *ramon diagram red arrows = potentially dangerous traffic* 
-  *database only has a public ip to allow us to ssh into it, otherwise not needed*
-  *bastion host is an option, but very expensive*
-  *delete public ip, shh in via public ip of app, then from there ssh imto db HOW??*
-  *NVA - network virtual appliance* 
-  *need to set up a route table*
-  *NVA needs ip forwarding enabled in linux - have to log in* 
-  *IP tables rules - other options avalable* 
-  *only safe traffic is forwarded on to the db - green arrow (is filtered)
+<br>
 
-#### code-along set up new virtual network 
+* diagram red arrows = potentially dangerous traffic
+* database only has a public ip to allow us to ssh into it, otherwise not needed *HOW??*
+* bastion host is an option, but very expensive*
 
+
+### code-along set up new virtual network 
+
+#### steps:
+```
+    Create v-net and subnets
+    Create DB VM from image
+    Create app VM from image
+    Check connection via Ping
+    Create NVA VM
+    Create route table
+    Setup route in route table
+    Enable IP forwarding for NVA VM on Azure
+    Enable IP forwarding for NVA VM on Linux
+    Setup NVA VM
+    Setup IP table rules
+    Setup stricter rules on the DB VM
+``` 
+
+#### Create v-net and subnets
+*add later from screenshots*
+![alt text](<../25.01.31/Screenshot from 2025-01-31 12-13-50.png>)
+#### Create DB VM from image
+![private nw](<../25.01.31/Screenshot from 2025-01-31 12-12-54.png>)
+*add later from screenshots*
+#### Create app VM from image
+
+**Advanced tab:** 
+* export command needs to match db private ip adress 
 ```
 #!/bin/bash
 # navigating into app folder
@@ -124,16 +149,64 @@ export DB_HOST=mongodb://10.0.4.4:27017/posts
  #starting the app
  pm2 start app.js 
 ```
+#### Check connection via Ping 
+* ssh into the app VM 
+* run `ping 10.0.4.4` to contact db VM 
+* this should be left running to check connection during set-up 
+![ping running](<../25.01.31/Screenshot from 2025-01-31 14-45-48.png>)
 
-enable in linux: 
-sysctl net.ipv4.ip_forward
-sudo nano /etc/sysctl.conf
-sudo sysctl -p
+#### Create NVA VM
 
+**basics tab**
+* avalability zone: zone 2 
+* security type: standard
+* image: Ubuntu Server 22.04 LTS - x64 Gen2
+* Username: adminuser 
+<br>
+--- 
 
-pings should be back! 
+**networking tab** 
+* use 3-subnet-vnet
+* dmz subnet
+* include public IP 
 
-script in nva - to configure iptables
+#### Create route table & associate with subnet 
+
+*in azure:* <br>
+* navigate to resource > routes > setings 
+* **Route name**: to-private-subnet-route
+* **Destination type**: IP Addresses 
+* **Destination IP addresses/CIDR ranges**: 10.0.4.0/24 (db private subnet)
+<br>
+![route table](<../25.01.31/Screenshot from 2025-01-31 15-27-36.png>)
+**Ping should now have stopped????** 
+
+#### Enable IP forwarding for NVA VM
+*in azure:* <br>
+* navigate to route table > settings > subnets 
+* click associate + choose public subnet (your app VM) 
+<br>
+*in NVA VM*: <br>
+* run `sysctl net.ipv4.ip_forward`
+* navigate to the config file with `sudo nano /etc/sysctl.conf`
+* within the file uncomment this line which sets forward to 1, as below, then save + exit 
+  
+```
+# Uncomment the next line to enable packet forwarding for IPv4 net.ipv4.ip_forward=1
+```
+
+* following this the config file needs to be reloaded with `sudo sysctl -p`
+* check IP forwarding by running `sysctl net.ipv4.ip_forward` which should be `= 1`
+<br>
+**following this pings should resume??? ** 
+
+#### Setup IP table rules
+
+* need to ssh into our NVA VM 
+* check iptables are installed using `sudo iptables --help` 
+* create a bash script that sets up the ip table rules `sudo nano config-ip-tables.sh` 
+* paste in the following script, save and exit: 
+
 ```
 #!/bin/bash
  
@@ -191,3 +264,19 @@ sudo DEBIAN_FRONTEND=noninteractive apt install iptables-persistent -y
 echo "Done!"
 echo ""
 ``` 
+* add execute permissions to the file you've just created `sudo chmod +x config-ip-tables.sh` and check permissions using `ls -l` 
+* should see: `-rwxr-xr-x`
+* then run the script `./config-ip-tables.sh`
+
+#### Setup stricter rules on the DB VM
+*in azure network security group:* <br>
+* create a rule to allow mongo db access: 
+![mongo db setup](../25.01.31/image-5.png)
+* Create second rule:
+  * Rule 2: Deny access to everything else :
+  * keep Source: Any
+  * keep Destination: Any
+  * Keep Service: custom
+  * Change Destination port ranges to * (meaning all)
+  * Choose Deny as action
+  * Priority: 1000**
