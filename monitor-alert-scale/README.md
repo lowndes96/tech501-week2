@@ -214,20 +214,20 @@ export DB_HOST=mongodb://10.0.4.4:27017/posts
  
 echo "Configuring iptables..."
  
-# ADD COMMENT ABOUT WHAT THE FOLLOWING COMMAND(S) DO
+# accept local input and output from the same server 
 sudo iptables -A INPUT -i lo -j ACCEPT
 sudo iptables -A OUTPUT -o lo -j ACCEPT
  
-# ADD COMMENT ABOUT WHAT THE FOLLOWING COMMAND(S) DO
+# allow establised connections in
 sudo iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
  
-# ADD COMMENT ABOUT WHAT THE FOLLOWING COMMAND(S) DO
+# allow establised connections out
 sudo iptables -A OUTPUT -m state --state ESTABLISHED -j ACCEPT
  
-# ADD COMMENT ABOUT WHAT THE FOLLOWING COMMAND(S) DO
+# drops invalid packets
 sudo iptables -A INPUT -m state --state INVALID -j DROP
  
-# ADD COMMENT ABOUT WHAT THE FOLLOWING COMMAND(S) DO
+# allows communication about ongoing or ongoing related requests
 sudo iptables -A INPUT -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
 sudo iptables -A OUTPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
  
@@ -241,10 +241,10 @@ sudo iptables -A OUTPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
 #sudo iptables -A OUTPUT -p tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
 #sudo iptables -A INPUT -p tcp --sport 22 -m conntrack --ctstate ESTABLISHED -j ACCEPT
  
-# ADD COMMENT ABOUT WHAT THE FOLLOWING COMMAND(S) DO
+# forwards mongodb requests originating from public subnet to the private subnet 
 sudo iptables -A FORWARD -p tcp -s 10.0.2.0/24 -d 10.0.4.0/24 --destination-port 27017 -m tcp -j ACCEPT
  
-# ADD COMMENT ABOUT WHAT THE FOLLOWING COMMAND(S) DO
+# rule allows ICMP traffic for diagnostics
 sudo iptables -A FORWARD -p icmp -s 10.0.2.0/24 -d 10.0.4.0/24 -m state --state NEW,ESTABLISHED -j ACCEPT
  
 # ADD COMMENT ABOUT WHAT THE FOLLOWING COMMAND(S) DO
@@ -274,9 +274,9 @@ echo ""
 ![mongo db setup](../25.01.31/image-5.png)
 * Create second rule:
   * Rule 2: Deny access to everything else :
-  * keep Source: Any
-  * keep Destination: Any
-  * Keep Service: custom
-  * Change Destination port ranges to * (meaning all)
+  * Source: Any
+  * Destination: Any
+  * Service: custom
+  * Destination port ranges: * (meaning all)
   * Choose Deny as action
-  * Priority: 1000**
+  * Priority: 1000
