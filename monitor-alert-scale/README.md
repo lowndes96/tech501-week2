@@ -1,8 +1,6 @@
 # Monitoring, Alerts and Scaling 
 
 - [Monitoring, Alerts and Scaling](#monitoring-alerts-and-scaling)
-    - [dashboard creation code along](#dashboard-creation-code-along)
-      - [install apache bench:](#install-apache-bench)
   - [autoscaling](#autoscaling)
     - [why?](#why)
     - [types of scaling](#types-of-scaling)
@@ -27,17 +25,6 @@
       - [Setup stricter rules on the DB VM](#setup-stricter-rules-on-the-db-vm)
 
 
-### dashboard creation code along
-
-* go to monitoring tab within overview 
-* can look at metrics, which are running automatically 
-* can create a custom dashboard: 
-![pin to dash](../25.01.30/pin_to_dash.png)
-*image missing? - add again*
-
-#### install apache bench: 
-sudo apt-get install apache2-utils
-test cpu 
 
 ## autoscaling
 
