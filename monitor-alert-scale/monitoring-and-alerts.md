@@ -1,17 +1,15 @@
 # Monitoring 
 
-## 
-![alert email](alert-email.png)
-
 ## dashboard creation code along
 
-* go to monitoring tab within overview 
+* go to monitoring tab within overview of VM 
 * can look at metrics, which are running automatically 
 * can create a custom dashboard: 
 ![pin to dash](../25.01.30/pin_to_dash.png)
 *image missing? - add again*
 
 ## install apache bench: 
+* apache bench is a tool to test how well your http server performs, specifically how many requests per second your instalation is able to serve
 
 ```
 Installing the Apache Bench benchmarking tool on the app VM:
@@ -23,12 +21,10 @@ ab
 
 Running a load-test with 1000 requests at a concurrency of 100 requests on my app's IP:
 
-ab -n [flag for specifying number of requests] [no. of requests] -c [flag for specifying how many requests to perform at a time, i.e. concurrently] [no. of concurrent requests] [URL of website to perform benchmarking on]
-
+ab -n [flag no. requests] [no. of requests] -c [ flag no.concurent requests] [no. of concurrent requests] [URL of website to perform benchmarking on]
+i.e. 
 ab -n 1000 -c 100 <publicIP>
 ```
-
-
 
 ## tuesday pm solo task 
 ### instructions: 
@@ -58,6 +54,23 @@ Hints:
 --- 
 ### 
 1. start a new vm to monitor 
-
-
-
+   * using image created previously, set up and run a vm as usual
+2. work out threshold for alerts 
+   * if this was a 'real' alert you would want to set the thresholds where the user experience starts to break down 
+   * for this example the threshold has been set very low to deliberatly trigger an alert 
+3. create a new alert rule 
+    scope: 
+    ![new alert rule screen](<25.01.04/Screenshot from 2025-02-04 16-27-30.png>)
+    (add table of settings in screenshot for clarity)
+    
+4. create action group (within create alert)
+![alt text](<25.01.04/Screenshot from 2025-02-04 16-32-22.png>)
+   * click create action group 
+   * select email address and add 
+   * should recieve the following email: 
+   * ![alt text](<25.01.04/Screenshot from 2025-02-04 16-43-10.png>)
+   * **note** - action groups cost to run - be sure to delete once not needed
+5. trigger the alert 
+![alt text](<25.01.04/Screenshot from 2025-02-04 16-48-56.png>)
+6. receive alert  
+![alert email](alert-email.png) 
