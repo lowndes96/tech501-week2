@@ -62,7 +62,7 @@ Hints:
     scope: 
     ![new alert rule screen](<25.01.04/Screenshot from 2025-02-04 16-27-30.png>)
     (add table of settings in screenshot for clarity)
-    
+
 4. create action group (within create alert)
 ![alt text](<25.01.04/Screenshot from 2025-02-04 16-32-22.png>)
    * click create action group 
@@ -72,5 +72,6 @@ Hints:
    * **note** - action groups cost to run - be sure to delete once not needed
 5. trigger the alert 
 ![alt text](<25.01.04/Screenshot from 2025-02-04 16-48-56.png>)
+[stress test instructions](https://www.tecmint.com/linux-cpu-load-stress-test-with-stress-ng-tool/)
 6. receive alert  
 ![alert email](alert-email.png) 
