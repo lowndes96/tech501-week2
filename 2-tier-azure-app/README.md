@@ -6,7 +6,6 @@
     - [disk](#disk)
   - [copy sparta test app to VM](#copy-sparta-test-app-to-vm)
     - [Using scp](#using-scp)
-  - [add port rule + create new network security group](#add-port-rule--create-new-network-security-group)
     - [using github](#using-github)
   - [Deploy the Sparta test app](#deploy-the-sparta-test-app)
   - [Making a generalised image](#making-a-generalised-image)
@@ -23,7 +22,6 @@
           - [run app in background:](#run-app-in-background)
           - [create db image:](#create-db-image)
           - [user data script](#user-data-script)
-    - [next steps](#next-steps)
     - [farah's sudo debugging](#farahs-sudo-debugging)
   
 add: 
@@ -51,17 +49,15 @@ azure@user specifies user you want to log in as to the VM <br>
 <br>
 -i (identity flag), in this case used to add a ssh 
 
-## add port rule + create new network security group 
-![add a port rule](25.01.27/create-nw-security-group.png)
-
 ### using github 
-
-- Clone the repository and navigate into it:
+1. `git init` the local folder holding the app code 
+2. make a corrisponding github repo and push the code to it
+3. Clone the repository and navigate into it:
     
     `git clone https://github.com/<your-repo>.git`
     
     `cd <repo-name>`
-*add more*
+4. now you should be able to run the app
 
 ## Deploy the Sparta test app
 
@@ -285,197 +281,6 @@ pm2 start app.js
  ``` 
 
 echo 'export DB_HOST=mongodb://20.90.208.188:27017/posts' >> /.bashrc
-
-
-
-### next steps 
-   21  export DB_HOST=mongodb://10.0.3.4:27017/posts  >>.bashrc
-   22  printenv DB_HOST
-   23  npm install 
-   24  node app.js
-   25  cd /
-   26  ls
-   27  cd repo
-   28  ls
-   29  node app.js
-   30  cd app
-   31  node app.js
-   32  printenv DB_HOST
-   33  export DB_HOST=mongodb://10.0.3.4:27017/posts
-   34  printenv DB_HOST
-   35  npm install 
-   36  node app.js
-   37  history 
- 
-    1  pwd
-    2  cd /
-    3  ls
-    4  cd repo
-    5  ls
-    6  cd app 
-    7  npm start
-    8  sudo apt-get update -y
-    9  sudo apt-get upgrade -y 
-   10  sudo systemct1 restart nginx
-   11  sudo systemctl restart nginx
-   12  sudo systemctl status nginx
-   13  node app.js
-   14  cd /
-   15  ls
-   16  cd repo
-   17  ls
-   18  cd app
-   19  ls
-   20  node app.js
-   21  export DB_HOST=mongodb://10.0.3.4:27017/posts
-   22  printenv DB_HOST
-   23  npm install 
-   24  node app.js
-   25  cd /
-   26  ls
-   27  cd repo
-   28  ls
-   29  node app.js
-   30  cd app
-   31  node app.js
-   32  printenv DB_HOST
-   33  export DB_HOST=mongodb://10.0.3.4:27017/posts
-   34  printenv DB_HOST
-   35  npm install 
-   36  node app.js
-   37  history 
-   38  close
-   39  cd /
-   40  ls
-   41  ls -a
-   42  sudo ls -a
-   43  cd media
-   44  ls
-   45  cd ..
-   46  cd var
-   47  ls
-   48  cd ..
-   49  ls
-   50  cd etc
-   51  ls
-   52  nginx
-   53  cd nginx
-   54  ls
-   55  sudo nano proxy_params 
-   56  cd
-   57  ls
-   58  cd /
-   59  ls
-   60  cd repo
-   61  ls
-   62  cd app 
-   63  npm start
-   64  cd /ect/nginx
-   65  cd /
-   66  ls
-   67  cd etc/nginx/
-   68  ls
-   69  nano proxy_params 
-   70  sudo nano proxy_params 
-   71  cd sites-available/
-   72  ls
-   73  cd ..
-   74  nano nginx.conf 
-   75  cd sites-available/
-   76  nano default
-   77  sudo nano default
-   78  cd /repo/app
-   79  ls
-   80  npm start
-   81  sudo nginx -t
-   82  sudo systemctl reload nginx
-   83  sudo systemctl status nginx
-   84  npm start
-   85  npm install pm2 -g
-   86  sudo npm install pm2 -g
-   87  pm2 start /usr/sbin/nginx --name nginx
-   88  pm2 list
-   89  pm2 restart nginx
-   90  pm3 logs nginx
-   91  pm2 logs nginx
-   92  sudo pm2 start /usr/sbin/nginx --name nginx
-   93  pm2 start app.js
-   94  sudo systemctl start nginx
-   95  history
-
-
-    1  sudo apt-get update -y
-    2  sudo apt-get upgrade -y
-    3  history
-    4  cd /
-    5  pwd
-    6  ls
-    7  sudo apt-get install gnupg curl 
-    8  curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc |    sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg    --dearmor
-    9  echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
-   10  sudo apt-get update
-   11  sudo apt-get install -y mongodb-org=7.0.6 mongodb-org-database=7.0.6 mongodb-org-server=7.0.6 mongodb-mongosh mongodb-org-mongos=7.0.6 mongodb-org-tools=7.0.6
-   12  mongodp --version
-   13  nano deply_db.sh
-   14  ls
-   15  cd 
-   16  ls
-   17  nano deply_db.sh
-   18  sudo systemctl status mongod
-   19  sudo systemctl start mongod
-   20  sudo systemctl status mongod
-   21  sudo nano /etc/mongod.conf 
-   22  sudo systemctl restart mongod
-   23  exit
-   24  sudo systenctl is-enabled mongo db
-   25  sudo systemctl is-enabled mongo db
-   26  sudo systemctl is-enabled mongod
-   27  sudo systemctl start mongod
-   28  sudo systemctl is-enabled mongod
-   29  sudo systemctl enabled mongod
-   30  sudo systemctl enable mongod
-   31  sudo systemctl start mongod
-   32  sudo systenctl status mongo db
-   33  sudo systemctl status mongo db
-   34  sudo systemctl status mongod
-   35  close
-   36  ls
-   37  nano deply_db.sh 
-   38  cd /
-   39  ls
-   40  status nginx
-   41  sudo systemctl status mongod
-   42  cd 
-   43  nano deply_db.sh 
-   44  sudo systemctl start mongod
-   45  printenv DB_HOST
-   46  export DB_HOST=mongodb://10.0.3.4:27017/posts  >>.bashrc
-   47  printenv DB_HOST
-   48  cd
-   49  ls
-   50  cd /
-   51  ls
-   52  cd etc
-   53  ls
-   54  sudo systemctl start mongod
-   55  ls
-   56  nano deply_db.sh 
-   57  sudo nano /etc/mongod.conf
-   58  sudo systemctl status mongod
-   59  sudo apt-get update -y
-   60  sudo apt-get upgrade -y 
-   61  sudo systemctl restart mongod
-   62  sudo systemctl status mongod
-   63  sudo apt-get update
-   64  printenv DB_HOST
-   65  history
-   66  export DB_HOST=mongodb://10.0.3.4:27017/posts  >>.bashrc
-   67  printenv DB_HOST
-   68  sudo nano .bashrc
-   69  echo 'export DB_HOST=mongodb://10.0.3.4:27017/posts' >> ~/.bashrc
-   70  source ~/.bashrc
-   71  sudo nano .bashrc
-   72  history
 
 
 ### farah's sudo debugging 
